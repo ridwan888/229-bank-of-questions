@@ -2,8 +2,6 @@
 var data;
 var tags = '';
 var topics = new Array;
-var selectedTags = new Array;
-
 function generateRow(item) {
     /* this fucntion renders a row in the table, 
     it takes a data item as input and returns an html row as string
@@ -78,6 +76,14 @@ function renderTopics(topics) {
 
 };
 
+function getSelectedTags(){
+    var st = new Array;
+    $("input[name='tags']:checked").each(function (index, obj) {
+        st.push(obj.value)
+    });
+    return st;
+}
+
 function renderTable(data) {
     // this funtion generates the html table
     success: $('#qtable').empty();
@@ -100,7 +106,6 @@ function renderTable(data) {
             $('#qtable tbody').append(generateRow(item));
         };
     });
-
 };
 
 Papa.parse('./static/229-bank-of-questions.csv', {
@@ -128,39 +133,25 @@ Papa.parse('./static/229-bank-of-questions.csv', {
         // for each tag in tags array add a button
         success: tags.forEach(function(tag) {
             if (tag) {
-                $('.tag-btns').append('<button type="button" id="' + tag + '" data-toggle="button" class="btn btn-secondary tag-btn">' + tag + '</button>');
+                
+                $('.tag-boxes').append('<label class="checkbox-inline"><input type="checkbox" name="tags" value="'+ tag +'"> '+ tag+' </label>');
             };
         });
 
-        //
+        //Add a filter button
         $('.tag-btns').append('<button type="button" id="filter" class="btn btn-secondary tag-btn">Filter</button>');
         // Add show all button at the end
         $('.tag-btns').append('<button type="button" id="all" class="btn btn-secondary tag-btn">Clear</button>');
 
         //event handler for tags button press
         $('.tag-btn').click(function(item) {
-            if (this.id != 'all') {
-                if (selectedTags.indexOf(this.id) === -1) {
-                    success: selectedTags.push(this.id);
-                }
-                else {
-                    success: selectedTags.pop(this.id)
-                }
-            };
                 if (this.id === 'all') {
                     $('#search-box').val('');
-                    if (selectedTags.length > 0) {
-                        success: tags.forEach(function(item) {
-                            $('#' + item).removeClass('active');
-                        });
-                    };
-                    selectedTags = new Array;
+                    $('input:checkbox').removeAttr('checked');
                     renderTable(data)
-
-
             } else if (this.id === 'filter'){
                 $('#search-box').val('');
-                renderTable(filterByTags(data, selectedTags))
+                renderTable(filterByTags(data, getSelectedTags()))
             }
             
         });
@@ -169,8 +160,8 @@ Papa.parse('./static/229-bank-of-questions.csv', {
         $('.search').click(function() {
             var filteredData = data;
             var terms = $('#search-box').val();
-            if (selectedTags.length > 0) {
-                filteredData = filterByTags(filteredData, selectedTags);
+            if ( getSelectedTags().length > 0) {
+                filteredData = filterByTags(filteredData,  getSelectedTags());
             };
             if (terms.length > 0) {
                 filteredData = filterBySearchTerms(filteredData, terms);
