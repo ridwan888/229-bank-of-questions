@@ -20,11 +20,15 @@ input[type='checkbox'] {
     border: 1px solid #555;
 }
 input[type='checkbox']:checked {
-    background: #88d98f;
+    background: #117519;
+}
+
+b a {
+    color: #3c763d
 }
 
 td b a {
-    color: rgb(7, 61, 7);
+    color: rgb(7, 136, 7);
 }
 
 .jumbotron {
@@ -36,4 +40,8 @@ td b a {
 .tag-boxes span{
     margin-left: 2px;
     margin-right: 3px;
+}
+
+#qtable > tbody > tr a {
+    color: #007A33;
 }
