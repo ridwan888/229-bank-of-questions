@@ -36,6 +36,9 @@ function generateRow(item) {
 function filterByTags(data, tags) {
     /* this function takes in data array and a tags array and returns the filterd array with given tags 
      */
+    if (tags.length < 1){
+        return data;
+    };
     var filteredData = new Array;
     var regex = new RegExp(tags.join('|'));
     data.forEach(function(item) {
@@ -134,7 +137,7 @@ Papa.parse('./static/229-bank-of-questions.csv', {
         success: tags.forEach(function(tag) {
             if (tag) {
                 
-                $('.tag-boxes').append('<label class="checkbox-inline"><input type="checkbox" name="tags" value="'+ tag +'"> '+ tag+' </label>');
+                $('.tag-boxes').append('<div class="checkbox-inline"><input type="checkbox" name="tags" value="'+ tag +'"> <span>'+ tag+' </span></div>');
             };
         });
 

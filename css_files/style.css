@@ -11,18 +11,29 @@ body {
     content: "#" counter(question_counter) ": ";
 }
 
-.btn-secondary:not(:disabled):not(.disabled):active,
-.btn-secondary:not(:disabled):not(.disabled).active,
-.show>.btn-secondary.dropdown-toggle {
-    color: #fff;
-    background-color: rgb(9, 105, 22);
-    border-color: rgb(9, 77, 26);
+input[type='checkbox'] {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 5px;
+    border: 1px solid #555;
+}
+input[type='checkbox']:checked {
+    background: #88d98f;
 }
 
 td b a {
-    color: green;
+    color: rgb(7, 61, 7);
 }
 
 .jumbotron {
     background: #edffec;
+}
+.tag-boxes{
+    font-size:20px;
+}
+.tag-boxes span{
+    margin-left: 2px;
+    margin-right: 3px;
 }
