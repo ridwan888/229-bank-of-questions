@@ -1,0 +1,28 @@
+#qtable {
+    margin-top: 1em;
+}
+
+body {
+    counter-reset: question_counter;
+}
+
+.question:before {
+    counter-increment: question_counter;
+    content: "#" counter(question_counter) ": ";
+}
+
+.btn-secondary:not(:disabled):not(.disabled):active,
+.btn-secondary:not(:disabled):not(.disabled).active,
+.show>.btn-secondary.dropdown-toggle {
+    color: #fff;
+    background-color: rgb(9, 105, 22);
+    border-color: rgb(9, 77, 26);
+}
+
+td b a {
+    color: green;
+}
+
+.jumbotron {
+    background: #edffec;
+}

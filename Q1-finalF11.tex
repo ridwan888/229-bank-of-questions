@@ -1,0 +1,118 @@
+\documentclass[psfig,11pt]{article} 
+\usepackage{graphicx} 
+\usepackage{setspace}
+\textheight 24.4cm
+\textwidth 16.59cm
+\topmargin -0.0cm
+\oddsidemargin -0.04in
+\evensidemargin -0.04in
+
+\def\normalstretch{1.0}
+\def\talllinestretch{1.5}
+\def\shortlinestretch{0.8}
+\renewcommand{\baselinestretch}{\normalstretch}
+\parskip 1ex
+\renewcommand{\topfraction}{.75}
+\renewcommand{\textfraction}{.20}
+\renewcommand{\floatsep}{0.0pt}
+\renewcommand{\textfloatsep}{1.0cm}
+\renewcommand{\floatpagefraction}{.85}
+
+\def\portindent{\hspace{\parindent}}
+\newcommand{\REM}[1]{} 
+
+\newif\ifsol
+%\soltrue
+
+\input epsf
+\usepackage{epsfig}
+\usepackage{subfigure}
+\usepackage{fullpage}
+\usepackage{multirow}
+\pagestyle{plain}
+\usepackage[usenames]{color}
+\renewcommand{\theenumi}{\alph{enumi}}
+\newcounter{quest}
+\newenvironment{question}[1][??]{\noindent{\bf Question  \stepcounter{quest}
+\arabic{quest} (\textrm{#1} points): }}
+
+\begin{document}
+
+\color{black}
+\begin{question}[20]
+In this question you will demonstrate that you understand operations involving arrays and pointers. In order to do that you will write the assembly code for the following function written in the C programming language. Assume that {\tt i} is a global integer variable.
+
+\begin{verbatim}
+00   void UpdateY(int *A, int *X, int *Y, int *col) {
+01       for(j = A[i] ; j < A[i+1] ; j++)
+02            Y[j] =  Y[j] + X[col[j]];
+03  }
+\end{verbatim}
+
+\begin{enumerate}
+\item ({\bf 10 points}) Using pseudo-code notation, write the low-level code that you will then use to generate the assembly code for the {\tt UpdateY} function. This code must show all the address calculations for the array accesses. Also, loops should be coded with goto statements. In this pseudo-code, you should use the names of the variables and arrays from the C code where appropriate. Also, each pseudo-code line should correspond to an assembly instruction. Thus an statement such as {\tt a} $\leftarrow$ {\tt b + c + d;} must be represented as {\tt t1} $\leftarrow$ {\tt c + d}; {\tt a} $\leftarrow$ {\tt b + t1}. The following sample lines of pseudo-code are not semantically meaningful. They are intended only to illustrate the style of notation that you should use in your pseudo code:
+
+\begin{tabular}{lll}
+   &  \verb| a| $\leftarrow$ \verb|b + c| \\
+   \verb|L1:| & \verb|Mem[x]| $\leftarrow$ \verb|y| & \verb|# memory with address x receives value y |\\
+    & \verb| t| $\leftarrow$ \verb|Mem[x]|                  & \verb|# t receives value of memory with address x|\\
+    & \verb| if(w| $\geq$ \verb|z) goto L1| 
+\end{tabular}
+
+\ifsol
+ \color{red}
+\begin{tabular}{lll}
+\verb|UpdateY:|     &  \verb| t0| $\leftarrow$ \verb|4*i| \\
+    &  \verb| t0| $\leftarrow$ \verb|A + t0| \\
+    & \verb| j| $\leftarrow$ \verb|Mem[t0]|                                 & \verb|# j |      $\leftarrow$ \verb|A[i] |\\
+    & \verb| t2| $\leftarrow$ \verb|Mem[t0+4]|                          & \verb|# t2|  $\leftarrow$ \verb|A[i+1] |\\
+ \verb|loop_j:| &  \verb| if(j| $\geq$ \verb|t2) goto done| \\
+     & \verb| t3| $\leftarrow$ \verb| 4*j |\\
+    & \verb| t4| $\leftarrow$ \verb| col + t3 |\\
+    & \verb| t4| $\leftarrow$ \verb| Mem[t4] |                             & \verb|# t4|  $\leftarrow$ \verb|col[j] |\\
+    & \verb| t4| $\leftarrow$ \verb| 4*t4|\\
+    & \verb| t5| $\leftarrow$ \verb| X + t4 |\\
+    & \verb| t5| $\leftarrow$ \verb| Mem[t5] |                             & \verb|# t5|  $\leftarrow$ \verb|X[col[j]] |\\
+    & \verb| t6| $\leftarrow$ \verb| Y + t3 |\\
+    & \verb| t7| $\leftarrow$ \verb| Mem[t6]|                              & \verb|# t7|  $\leftarrow$ \verb|Y[j] |\\
+    & \verb| t7| $\leftarrow$ \verb| t7 + t5|                                  & \verb|# t7|  $\leftarrow$ \verb|Y[j] + X[col[j]]|\\
+    & \verb| Mem[t6]| $\leftarrow$ \verb| t7 |                             & \verb|# Y[j]|  $\leftarrow$ \verb|Y[j] + X[col[j]]|\\
+    & \verb| j| $\leftarrow$ \verb| j+1| \\
+    & \verb| goto loop_j| \\
+\verb|done:| & \verb| return| \\
+\end{tabular}
+ \color{black}
+\fi
+
+\newpage
+\item ({\bf 10 points}) Following the MIPS calling conventions, write the MIPS assembly code for the {\tt UpdateY} function using the pseudo-code that you wrote for part (a). Assume that the global variable {\tt i} is stored in register {\tt \$s0} (this is a deviation from the standard MIPS calling convention).
+
+\ifsol
+ \color{red}
+\begin{tabular}{lllll}
+&\verb|UpdateY:|            & \verb| sll|    & \verb| $t0, $s0, 2   |      & \verb|# $t0| $\leftarrow$ \verb|4*i | \\
+&                        & \verb| add| & \verb| $t0, $a0, $t0|     & \verb|# $t0| $\leftarrow$ \verb|Address(A[i]) | \\
+&                        & \verb| lw|    & \verb| $t1, 0($t0)|         & \verb|# j|      $\leftarrow$ \verb|A[i] |\\
+&                        & \verb| lw|    & \verb| $t2, 4($t0)|         & \verb|# $t2|  $\leftarrow$ \verb|A[i+1] |\\
+&\verb|loop_j:| & \verb| bge| & \verb| $t1, t2, done|     & \verb|# if(j| $\geq$ \verb|t2) goto done| \\
+&                        & \verb| sll| & \verb| $t3, $t1, 2|             & \verb|# $t3|  $\leftarrow$ \verb|4*j |\\
+&                        & \verb| add| & \verb| $t4, $a3, $t3|     & \verb|# $t4|  $\leftarrow$ \verb|Address(col[j]) |\\
+&                        & \verb| lw|    & \verb| $t4, 0($t4)|         & \verb|# $t4|  $\leftarrow$ \verb|col[j] |\\
+&                        & \verb| sll|    & \verb| $t4, t4, 2|            & \verb|# $t4|  $\leftarrow$ \verb|4*col[j] |\\
+&                        & \verb| add| & \verb| $t5, $a1, $t4|     & \verb|# $t5|  $\leftarrow$ \verb|Address(X[col[j]) |\\
+&                        & \verb| lw|    & \verb| $t5, 0($t5)|         & \verb|# $t5|  $\leftarrow$ \verb|X[col[j]] |\\
+&                        & \verb| add| & \verb| $t6, $a2, $t3|     & \verb|# $t6|  $\leftarrow$ \verb|Address(Y[j]) |\\
+&                        & \verb| lw|    & \verb| $t7, 0($t6)|         & \verb|# $t7|  $\leftarrow$ \verb|Y[j] |\\
+&                        & \verb| add|    & \verb| $t7, $t7, $t5|    & \verb|# $t7|  $\leftarrow$ \verb|Y[j] + X[col[j]] |\\
+&                        & \verb| sw|    & \verb| $t7, 0($t6)|         & \verb|# Y[j]|  $\leftarrow$ \verb|Y[j] + X[col[j]] |\\
+&                        & \verb| addi|    & \verb| $t1, $t1, 1|     & \verb|# j|  $\leftarrow$ \verb|j+1 |\\
+&                        & \verb| j|    & \verb| $loop_j|                & \verb|# goto loop_j|  \\
+&\verb|done:| & \verb| jr|    & \verb| $ra|                      &  \\
+\end{tabular}
+ \color{black}
+\fi
+
+\end{enumerate}
+\end{question}
+\end{document}
+

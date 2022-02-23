@@ -1,0 +1,154 @@
+\documentclass[psfig,11pt]{article} 
+\usepackage{graphicx} 
+\usepackage{setspace}
+\textheight 24.4cm
+\textwidth 16.59cm
+\topmargin -0.0cm
+\oddsidemargin -0.04in
+\evensidemargin -0.04in
+
+\def\normalstretch{1.0}
+\def\talllinestretch{1.5}
+\def\shortlinestretch{0.8}
+\renewcommand{\baselinestretch}{\normalstretch}
+\parskip 1ex
+\renewcommand{\topfraction}{.75}
+\renewcommand{\textfraction}{.20}
+\renewcommand{\floatsep}{0.0pt}
+\renewcommand{\textfloatsep}{1.0cm}
+\renewcommand{\floatpagefraction}{.85}
+
+\def\portindent{\hspace{\parindent}}
+\newcommand{\REM}[1]{} 
+%\newcommand{\sol}[1]{\noindent\textcolor{red}{{#1}}}
+%\newcommand{\solspace}[1]{}
+\newcommand{\sol}[1]{\REM{#1}}
+\newcommand{\solspace}[1]{\vspace{#1}}
+\newif\ifsol
+%\soltrue
+
+\input epsf
+\usepackage{epsfig}
+\usepackage{subfigure}
+\usepackage{fullpage}
+\usepackage{multirow}
+\pagestyle{plain}
+\usepackage[usenames]{color}
+\renewcommand{\theenumi}{\alph{enumi}}
+\newcounter{quest}
+\newenvironment{question}[1][??]{\noindent{\bf Question  \stepcounter{quest}
+\arabic{quest} (\textrm{#1} points): }}
+
+\begin{document}
+
+\color{black}
+
+\begin{question}[20]
+In this question you will demonstrate that you understand how the data stored in caches is organized. Assume that each cache operates in a machine with a 32-bit virtual address.
+
+
+\begin{itemize}
+\item({\bf 10 points}) For each of the cache configurations below, indicate how many bits are used for byte offset, for cache index, and for tag. 
+
+\doublespacing
+\begin{tabular}{|c|c|c|c|c|c|} \hline
+Cache capacity & Associativity       & Size of Cache Block & Tag Size & Index Size & Byte offset size \\ \hline
+64 KB                   & Direct mapped  & 128 bytes                   & \sol{16} & \sol{9} & \sol{7} \\ \hline
+32 KB                   & 2-way                  & 64 bytes                     & \sol{18}   & \sol{8} & \sol{6} \\ \hline
+32 MB                   & 8-way                 & 512 bytes                   & \sol{10} & \sol{13} & \sol{9} \\ \hline
+\end{tabular}
+\singlespacing
+
+
+\ifsol
+\color{red}
+\begin{eqnarray}
+\mathrm{\#\ of\ blocks\ in\ cache} &=& \frac{\mathrm{cache\ capacity}}{\mathrm{block\ size}} \nonumber \\
+\mathrm{\#\ of\ entries\ in\ cache} &=& \frac{\mathrm{\#\ of\ blocks\ in\ cache}}{\mathrm{associativity}} \nonumber \\
+\mathrm{\#\ of\ index\ bits} &=& log_2 (\mathrm{\#\ of\ entries\ in\ cache}) \nonumber \\
+\mathrm{\#\ of\ offset\ bits} &=& log_2(\mathrm{size\ of\ cache\ block}) \nonumber \\
+\mathrm{\# of\ tag\ bits} &=& 32 -  \mathrm{\#\ of\ index\ bits} - \mathrm{\#\ of\ offset\ bits} \nonumber
+\end{eqnarray}
+
+For first cache:
+\begin{eqnarray}
+\mathrm{\#\ of\ blocks\ in\ cache} &=& \frac{64 KB}{128} = \frac{2^{16}}{2^7} = 2^9 \nonumber \\
+\mathrm{\#\ of\ entries\ in\ cache} &=& \frac{2^9}{1} = 2^9 \nonumber \\
+\mathrm{\#\ of\ index\ bits} &=& log_2 (2^9) = 9 \mathrm{\ bits} \nonumber \\
+\mathrm{\#\ of\ offset\ bits} &=& log_2(128) = 7 \mathrm{\ bits} \nonumber \\
+\mathrm{\# of\ tag\ bits} &=& 32 - 9 -7 = 16 \mathrm{\ bits} \nonumber
+\end{eqnarray}
+
+For second cache:
+\begin{eqnarray}
+\mathrm{\#\ of\ blocks\ in\ cache} &=& \frac{32 KB}{64} = \frac{2^{15}}{2^6} = 2^9 \nonumber \\
+\mathrm{\#\ of\ entries\ in\ cache} &=& \frac{2^9}{2} = 2^8 \nonumber \\
+\mathrm{\#\ of\ index\ bits} &=& log_2 (2^8) = 8 \mathrm{\ bits} \nonumber \\
+\mathrm{\#\ of\ offset\ bits} &=& log_2(64) = 6 \mathrm{\ bits} \nonumber \\
+\mathrm{\# of\ tag\ bits} &=& 32 - 8 -6 = 18 \mathrm{\ bits}  \nonumber
+\end{eqnarray}
+
+For third cache:
+\begin{eqnarray}
+\mathrm{\#\ of\ blocks\ in\ cache} &=& \frac{32 MB}{512} = \frac{2^{25}}{2^9} = 2^{16} \nonumber \\
+\mathrm{\#\ of\ entries\ in\ cache} &=& \frac{2^{16}}{8} = 2^{13} \nonumber \\
+\mathrm{\#\ of\ index\ bits} &=& log_2 (2^{13}) = 13 \mathrm{\ bits} \nonumber \\
+\mathrm{\#\ of\ offset\ bits} &=& log_2(512) = 9 \mathrm{\ bits} \nonumber \\
+\mathrm{\# of\ tag\ bits} &=& 32 - 13 - 9 = 10 \mathrm{\ bits}  \nonumber
+\end{eqnarray}
+
+\color{black}
+\else
+\vspace{2.0in}
+\fi
+
+\item{\bf 10 points} The table below contains the same cache organizations listed in the table above. Using binary notation, provide the value of the tag and the value of the cache index for a memory reference to the address 0xABCD EF78. Also indicate which word within the block is being accessed. The word at offset 0 is word \#0, the word at offset 4 is word \#1, etc.
+\end{itemize}
+
+\doublespacing
+\begin{tabular}{|c|c|c|c|c|c|} \hline
+Cache & Associativity       & Cache Block & \ \ \ \ \ \ \ \ \ \ \ \ \ Tag \ \ \ \ \ \ \ \ \ \ \ \ \ & \ \ \ \ \ \ \ \ \ \ Index \ \ \ \ \ \ \ \ \ & word accessed \\
+capacity & & & & & \\ \hline
+64 KB                   & Dir. map.  & 128 bytes                   & \sol{1010 1011 1100 1101} & \sol{1110 1111 0}&  \sol{30}\\
+32 KB                   & 2-way                  & 64 bytes                     & \sol{1010 1011 1100 1101 11}& \sol{1011 1101} & \sol{14} \\
+32 MB                   & 8-way                 & 512 bytes                   & \sol{1010 1011 11} & \sol{00 1101 1110 111} & \sol{94} \\ \hline
+\end{tabular}
+\singlespacing
+
+
+\ifsol
+\color{red}
+64KB, Direct, 128 bytes:
+
+\begin{tabular}{ccccccccc}
+                                    A       &  B  &       C  &      D  &       E  &      F  &      \multicolumn{2}{c}{7}  &        8 \\
+                                 1010 & 1011 & 1100 & 1101 & 1110 & 1111&  0& 111&  1000\\
+                                 \multicolumn{4}{|c|}{tag} &  \multicolumn{3}{|c|}{index} & \multicolumn{2}{|c|}{offset}\\
+\end{tabular}
+
+\vspace{0.2in}
+32KB, 2-way, 64 bytes:
+
+\begin{tabular}{cccccccccc}
+                                    A       &  B  &       C  &      D  &       \multicolumn{2}{c}{E}  &      F  &    \multicolumn{2}{c}{7}  &        8 \\
+                                 1010 & 1011 & 1100 & 1101 & 11&10 & 1111&  01&11&  1000\\
+                                 \multicolumn{5}{|c|}{tag} &  \multicolumn{3}{|c|}{index} & \multicolumn{2}{|c|}{offset}\\
+\end{tabular}
+
+\vspace{0.2in}
+32MB, 8-way, 512 bytes:
+
+
+\begin{tabular}{cccccccccc}
+                                    A       &  B  &       \multicolumn{2}{c}{C}  &      D  &       E  &      \multicolumn{2}{c}{F}  &    7  &        8 \\
+                                 1010 & 1011 & 11& 00 & 1101 & 1110 & 111&1&  0111&  1000\\
+                                 \multicolumn{3}{|c|}{tag} &  \multicolumn{4}{|c|}{index} & \multicolumn{3}{|c|}{offset}\\
+\end{tabular}
+\color{black}
+\fi
+
+\end{question}
+
+
+\end{document}
+

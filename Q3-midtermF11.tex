@@ -1,0 +1,85 @@
+\documentclass[psfig,11pt]{article} 
+ 
+\textheight 24.4cm
+\textwidth 16.59cm
+\topmargin -0.0cm
+\oddsidemargin -0.04in
+\evensidemargin -0.04in
+
+\def\normalstretch{1.0}
+\def\talllinestretch{1.5}
+\def\shortlinestretch{0.8}
+\renewcommand{\baselinestretch}{\normalstretch}
+\parskip 1ex
+\renewcommand{\topfraction}{.75}
+\renewcommand{\textfraction}{.20}
+\renewcommand{\floatsep}{0.0pt}
+\renewcommand{\textfloatsep}{1.0cm}
+\renewcommand{\floatpagefraction}{.85}
+
+\def\portindent{\hspace{\parindent}}
+\newcommand{\REM}[1]{} 
+%\newcommand{\sol}[1]{\noindent\textcolor{red}{{#1}}}
+\newcommand{\sol}[1]{\REM{#1}}
+
+\newif\ifsol
+%\soltrue
+
+\input epsf
+\usepackage{epsfig}
+\usepackage{subfigure}
+\usepackage{fullpage}
+\usepackage{multirow}
+%\usepackage{multicolumn}
+\pagestyle{plain}
+\usepackage[usenames]{color}
+
+\begin{document}
+
+\newcounter{quest}
+\newenvironment{question}[1][??]{\noindent{\bf Question  \stepcounter{quest}
+\arabic{quest} (\textrm{#1} points): }}
+
+
+\color{black}
+
+\begin{question}[25] A common pattern of execution in numerical computing is called a {\em stencil} computation. In a stencil computation the same computing pattern is repeated for multiple elements of an array. An example is a computation that computes the average of the surrounding elements in an $N\times N$ array. Assume that an integer is stored using 4 bytes in this machine. Also assume that the dimension of the vector {\tt A} was declared statically to be $64\times 64$
+
+\begin{verbatim}
+00 int stencil2D_element_update(int *A, int i, int j)
+01 {
+02   int sum;
+03   
+04   sum = A[i][j-1];
+05   sum = sum + A[i][j+1];
+06   sum = sum + A[i-1][j];
+07   sum = sum + A[i+1][j];
+08   return(sum/4.0);
+09 }
+\end{verbatim}
+
+Write MIPS assembly code for the computation of {\tt  sum} (lines 04 to 08 in the C code)\\ \underline{using a minimum number of instructions}.
+
+\ifsol
+ \color{red}
+ \begin{tabular}{lll}
+\verb| sll| & \verb| $t0, $a1, 8   |     & \verb| # $t0 <-- 4*i*N = 4*i*64 = 256*i = i<<8 |\\
+\verb| sll| & \verb| $t1, $a2, 2   |     & \verb| # $t1 <-- 4*j |\\
+\verb| add| & \verb| $t2, $a0, $t0|     & \verb| # $t2 <-- A + $t0 = A + 4*i*N |\\
+\verb| add| & \verb| $t2, $t2, $t1 |     & \verb| # $t2 <-- A + 4*i*N + j*4 = Address(A[i][j]) |\\
+\verb| lw| & \verb| $t3, -4($t2)  |     & \verb| # sum = $t3 <-- A[i][j-1] |\\
+\verb| lw| & \verb| $t4, 4($t2)   |     & \verb| # $t4 <- A[i][j+1] |\\
+\verb| add| & \verb| $t3, $t3, $t4|      & \verb| # sum <-- sum + A[i][j+1] |\\
+\verb| lw| & \verb| $t4, -256($t2)|   & \verb| # $t4 <- A[i-1][j] |\\
+\verb| add| & \verb| $t3, $t3, $t4  |    & \verb| # sum <- sum + A[i-1][j] |\\
+\verb| lw| & \verb| $t4, 256($t2)|    & \verb| # $t4 <- A[i+1][j] |\\
+\verb| add | & \verb| $t3, $t3, $t4  |    & \verb| # sum <- sum + A[i+1][j] |
+\end{tabular}
+ \color{black}
+ \else
+ \vspace{0.5in}
+ \fi
+\end{question}
+
+\end{document}
+

@@ -1,0 +1,111 @@
+\documentclass[psfig,11pt]{article} 
+\usepackage{graphicx} 
+\usepackage{setspace}
+\textheight 24.4cm
+\textwidth 16.59cm
+\topmargin -0.0cm
+\oddsidemargin -0.04in
+\evensidemargin -0.04in
+
+\def\normalstretch{1.0}
+\def\talllinestretch{1.5}
+\def\shortlinestretch{0.8}
+\renewcommand{\baselinestretch}{\normalstretch}
+\parskip 1ex
+\renewcommand{\topfraction}{.75}
+\renewcommand{\textfraction}{.20}
+\renewcommand{\floatsep}{0.0pt}
+\renewcommand{\textfloatsep}{1.0cm}
+\renewcommand{\floatpagefraction}{.85}
+
+\def\portindent{\hspace{\parindent}}
+\newcommand{\REM}[1]{} 
+%\newcommand{\sol}[1]{\noindent\textcolor{red}{{#1}}}
+%\newcommand{\solspace}[1]{}
+\newcommand{\sol}[1]{\REM{#1}}
+\newcommand{\solspace}[1]{\vspace{#1}}
+
+\newif\ifsol
+%\soltrue
+
+
+\input epsf
+\usepackage{epsfig}
+\usepackage{subfigure}
+\usepackage{fullpage}
+\usepackage{multirow}
+\pagestyle{plain}
+\usepackage[usenames]{color}
+
+\begin{document}
+
+\newcounter{quest}
+\newenvironment{question}[1][??]{\noindent{\bf Question  \stepcounter{quest}
+\arabic{quest} (\textrm{#1} points): }}
+
+\begin{question}[20] 
+For each of the following statements you have three options: (i) leave
+it blank; (ii) Mark it with {\bf T} to indicate that the statement is
+true; (iii) Mark it with {\tt F} to indicate that the statement is
+false.  \underline{\bf You lose 2 points for each incorrect answer.}
+You win 4 points for each correct answer. You don't win or lose any
+points if you leave the statement blank.  Regardless of how many
+statements you mark wrong, your score in this question cannot be below
+zero.
+
+\begin{enumerate}
+
+\item (\hspace{0.2in}\sol{\bf F\ }) In an embedded processor whose
+  design was derived from the MIPS architecture, the address field for
+  a branch instruction is 8 bits. The execution procedure for a branch
+  is the same as in MIPS:
+\begin{verbatim}
+bne  $s3, $s4, 8:      PC <-- PC + 4
+                       if($1 != $2) then PC <-- PC + (address << 2)
+\end{verbatim}
+The largest distance that a branch can jump backward in this architecture is 128 instructions.
+
+\sol{The largest negative 8-bit address is 1000 0000 = - $2^7$ =
+  - 128. The PC is incremented by 4 before this value is shifted and
+  added to the PC, thus the largest jump backward with a branch is 127
+  instructions.}
+
+\item (\hspace{0.2in}\sol{\bf F\ }) Assume two cache designs $C_A$ and
+  $C_B$ have the same block size. $C_A$ is a 16 KB 2-way set
+  associative cache and $C_B$ is an 8 KB direct-mapped cache. More
+  bits are used for index in $C_A$ than in $C_B$.
+
+\sol{$C_A$ has twice as many blocks as $C_B$, but each index points to
+  a set that contains two blocks. Thus both caches use the same number
+  of bits for indexing.}
+
+\item (\hspace{0.2in}\sol{\bf T\ }) The following code correctly
+  execute an atomic swap between the value stored in the address
+  specified by {\tt \$s1} and the content of register {\tt \$s4}:
+\begin{verbatim}
+try:          add   $t0, $zero, $s4
+              ll    $t1, 0($s1)
+              sc    $t0, 0($s1)
+              beq   $t0, $zero, try
+              add   $s4, $zero, $t1
+\end{verbatim}
+
+\item (\hspace{0.2in}\sol{\bf F\ }) To ensure the correct operation of
+  the system, an exception handler must save the value that it uses
+  into a special frame stored in the stack of the program that got
+  interrupted by the exception.
+
+\item (\hspace{0.2in}\sol{\bf T\ }) The figure below depicts the
+  architecture of a 5-stage pipelined implementation of the data path
+  for the MIPS architecture. This drawing is incorrect because the
+  instruction fetched at time $T_i$ will write to the register
+  specified by the instruction fetched at time $T_{i+3}$.
+\begin{center}
+       \includegraphics[width=6in]{Pipeline}
+\end{center}
+
+\end{enumerate}
+\end{question}
+
+\end{document}
+

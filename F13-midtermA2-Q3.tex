@@ -1,0 +1,241 @@
+\documentclass[psfig,11pt]{article} 
+ 
+\textheight 24.4cm
+\textwidth 16.59cm
+\topmargin -0.0cm
+\oddsidemargin -0.04in
+\evensidemargin -0.04in
+
+\def\normalstretch{1.0}
+\def\talllinestretch{1.5}
+\def\shortlinestretch{0.8}
+\renewcommand{\baselinestretch}{\normalstretch}
+\parskip 1ex
+\renewcommand{\topfraction}{.75}
+\renewcommand{\textfraction}{.20}
+\renewcommand{\floatsep}{0.0pt}
+\renewcommand{\textfloatsep}{1.0cm}
+\renewcommand{\floatpagefraction}{.85}
+
+\def\portindent{\hspace{\parindent}}
+\newcommand{\REM}[1]{} 
+%\newcommand{\sol}[1]{\noindent\textcolor{red}{{#1}}}
+%\newcommand{\solspace}[1]{}
+\newcommand{\sol}[1]{\REM{#1}}
+\newcommand{\solspace}[1]{\vspace{#1}}
+
+\newif\ifsol
+\soltrue
+
+\newcommand{\Bsol}{\ifsol \noindent \color{red}}
+\newcommand{\Esol}[1]{\color{black} 
+\else 
+\vspace{{#1}} 
+ \fi
+ }
+
+\input epsf
+\usepackage{epsfig}
+\usepackage{subfigure}
+\usepackage{fullpage}
+\usepackage{multirow}
+%\usepackage{multicolumn}
+\pagestyle{plain}
+\usepackage[usenames]{color}
+
+\begin{document}
+
+\newcounter{quest}
+\newenvironment{question}[1][??]{\noindent{\bf Question  \stepcounter{quest}
+\arabic{quest} (\textrm{#1} points): }}
+
+\begin{question}[25]
+The code for function {\tt make\_big\_endian} in the C programming language is as follows:
+
+\begin{verbatim}
+00  struct page_list {
+01                  page_list*       prev;
+02                  page_list*       next;
+03                  unsigned int     page;
+04                 };
+05  int  *page_count;
+06  char valid[1000]; 
+07
+08  void  make_big_endian(page_list **page_pointers)
+09  {
+10    page_list		*page_array;
+11    unsigned int      i;
+12    ...
+13    valid[i-1] = valid[i];
+14    *page_pointers++;
+15    page_array++;
+16    *page_pointers = page_array;
+17    *page_count = i;
+18     ....
+19  }
+\end{verbatim}
+
+In this code {\tt page\_array} is a dinamically allocated array of {\tt page\_lists} (the actual allocation call is ommitted above) and {\tt page\_pointers} is an array of pointers to {\tt page\_list}. Assume that the variable {\tt page\_array} is stored in the stack at the address given by {\tt \$fp-4}; the global variable {\tt page\_count} is at the address given by {\tt \$gp} and the global array {\tt valid} starts at the address {\tt \$gp+4}. The parameter passed to {\tt make\_big\_endian} is the address of the first position of the array of pointers to {\tt page\_list} called {\tt page\_pointers}.  Assume that in this architecture an integer is stored in 32 bits and a memory address also occupies 32 bits. Assume that {\tt i} is in {\tt \$t0}. Write MIPS assembly code for each one of the following statements in the program above:
+
+\begin{enumerate}
+\item ({\bf 5 points})   {\tt valid[i-1] = valid[i];}
+\ifsol
+\color{red}
+\begin{verbatim}
+     # valid is an array of chars, thus no need to multiply index
+     addi    $t2, $gp, $t0  #  $t2 <-- $gp+i = Address(valid[i-4])
+     lb      $t3, 4($t2)    #  $t3 <-- MEM[$gp+i+4] = valid[i]
+     sb      $t3, 3($t2)    #  MEM[$gp+i+3] = valid[i-1] <-- valid[i]
+\end{verbatim}
+\color{black}
+\else
+
+\renewcommand{\baselinestretch}{\talllinestretch}
+%\begin{table}[h!] 
+%\centering
+\begin{tabular}{|ccc|} 
+\hline
+\ \ &\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ &\ \ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \hline
+\end{tabular}
+%\end{table}
+
+\fi
+
+\newpage
+
+\item ({\bf 5 points})	 {\tt *page\_pointers++;}
+\ifsol
+\color{red}
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.35]{figs/F13-midtermA2-Q3/Item2.pdf}
+\caption{\label{fig:Item2} Illustration of {\tt *page\_pointers++;}}
+\end{figure}
+
+\begin{verbatim}
+     # *page_pointers is a pointer to a page_list
+     lw      $t2, 0($a0)     #  $t2 <-- *page_pointers
+     addi    $t2, $t2, 12     #  $t2 <-- $t2+12
+     sw      $t2, 0($a0)     #  *page_pointers <-- *page_pointers + 12
+\end{verbatim}
+\color{black}
+\else
+
+\renewcommand{\baselinestretch}{\talllinestretch}
+%\begin{table}[h!] 
+%\centering
+\begin{tabular}{|ccc|} 
+\hline
+\ \ &\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ &\ \ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \hline
+\end{tabular}
+%\end{table}
+\fi
+
+
+\item ({\bf 5 points})   {\tt page\_array++;}
+\ifsol
+\color{red}
+\begin{verbatim}
+     # page_array points to a page_list which is formed by 12 bytes
+     lw      $t1, -4($fp)    #  $t1 <-- page_array
+     addi    $t1, $t1, 12   #  $t1 <-- page_array+1
+     sw      $t1, -4($fp)    #  page_array <- page_array+1
+\end{verbatim}
+\color{black}
+\else
+
+\renewcommand{\baselinestretch}{\talllinestretch}
+%\begin{table}[h!] 
+%\centering
+\begin{tabular}{|ccc|} 
+\hline
+\ \ &\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ &\ \ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \hline
+\end{tabular}
+%\end{table}
+\fi
+
+\item ({\bf 5 points})   {\tt *page\_pointers = page\_array;}
+\ifsol
+\color{red}
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.35]{figs/F13-midtermA2-Q3/Item4.pdf}
+\caption{\label{fig:Item2} Illustration of {\tt *page\_pointers = page\_array;}
+\end{figure}
+\begin{verbatim}
+     lw    $t2, -4($fp)     #  $t2 <-- page_array
+     sw    $t2, 0($a0)    #  *page_pointers <-- page_array
+\end{verbatim}
+\color{black}
+\else
+
+\renewcommand{\baselinestretch}{\talllinestretch}
+%\begin{table}[h!] 
+%\centering
+\begin{tabular}{|ccc|} 
+\hline
+\ \ &\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ &\ \ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \hline
+\end{tabular}
+%\end{table}
+\fi
+
+\item ({\bf 5 points})   {\tt *page\_count = i;}
+\ifsol
+\color{red}
+\begin{verbatim}
+     lw     $t2, 0($gp)     #  $t2 <-- Address(page_count)
+     sw     $t0, 0($t2)     #  *page_count <-- i
+\end{verbatim}
+\color{black}
+\else
+
+\renewcommand{\baselinestretch}{\talllinestretch}
+%\begin{table}[h!] 
+%\centering
+\begin{tabular}{|ccc|} 
+\hline
+\ \ &\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ &\ \ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \cline{2-2}
+\ &\ &\ \\ \hline
+\end{tabular}
+%\end{table}
+\fi
+
+\end{enumerate}
+\end{question}
+
+
+\end{document}
+

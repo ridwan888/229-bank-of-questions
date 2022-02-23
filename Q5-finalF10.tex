@@ -1,0 +1,146 @@
+\documentclass[psfig,11pt]{article} 
+\usepackage{graphicx} 
+\usepackage{setspace}
+\textheight 24.4cm
+\textwidth 16.59cm
+\topmargin -0.0cm
+\oddsidemargin -0.04in
+\evensidemargin -0.04in
+
+\def\normalstretch{1.0}
+\def\talllinestretch{1.5}
+\def\shortlinestretch{0.8}
+\renewcommand{\baselinestretch}{\normalstretch}
+\parskip 1ex
+\renewcommand{\topfraction}{.75}
+\renewcommand{\textfraction}{.20}
+\renewcommand{\floatsep}{0.0pt}
+\renewcommand{\textfloatsep}{1.0cm}
+\renewcommand{\floatpagefraction}{.85}
+
+\def\portindent{\hspace{\parindent}}
+\newcommand{\REM}[1]{} 
+%\newcommand{\sol}[1]{\noindent\textcolor{red}{{#1}}}
+%\newcommand{\solspace}[1]{}
+\newcommand{\sol}[1]{\REM{#1}}
+\newcommand{\solspace}[1]{\vspace{#1}}
+
+\newif\ifsol
+%\soltrue
+
+
+\input epsf
+\usepackage{epsfig}
+\usepackage{subfigure}
+\usepackage{fullpage}
+\usepackage{multirow}
+\pagestyle{plain}
+\usepackage[usenames]{color}
+
+\begin{document}
+
+\newcounter{quest}
+\newenvironment{question}[1][??]{\noindent{\bf Question  \stepcounter{quest}
+\arabic{quest} (\textrm{#1} points): }}
+
+\begin{question}[20]
+The access time to the main memory that serves data and instructions
+to a processor is 70 ns. For a given program, 20\% of the instructions
+are loads or stores. The design team is considering two versions for
+the processor:
+\begin{itemize}
+\item {\bf Design A}, with an 8 KB unified L1 cache that has a miss rate of 4.0\%.
+\item {\bf Design B}, with a 16 KB L1 unified cache that has a hit time of 1.07 ns.
+\end{itemize}
+In both designs, the hit time of the L1 cache determines the clock cycle of the processor.
+Both designs are equiped with a 4 MB L2 cache that has a miss rate of 75\% and a hit time of 12 ns.
+
+\begin{enumerate}
+\item ({\bf 7 points}) The Average Memory Acccess Time (AMAT) for
+  design {\bf A} was measured to be $3.5\;ns$. What is the clock cycle
+  for this design?
+
+\sol{
+The correct definition of AMAT (according to the textbook) is the
+average memory access time for each instruction executed in the
+program. When there is a hit both for the data and the instruction,
+both accesses happen in parallel and thus the only time spent is the
+hit time of L1. But the additional miss penalty for the 20\% of the
+instructions that also access data needs to be taken into
+consideration.  We will use T to represent time and R to represent
+rate.
+\begin{eqnarray}
+\mathrm{AMAT} &=& L1_\mathrm{hitT} + (1.0 + \mathrm{DataR}) \times [L1_\mathrm{missR} \times (L2_\mathrm{hitT} + L2_\mathrm{missR} \times \mathrm{Memory}_\mathrm{accessT})] \nonumber \\
+L1_\mathrm{hitT} &=& \mathrm{AMAT} - (1.0 + \mathrm{DataR}) \times [L1_\mathrm{missR} \times (L2_\mathrm{hitT} + L2_\mathrm{missR} \times \mathrm{Memory}_\mathrm{accessT})] \nonumber \\
+\mathrm{Clock Cycle}(\mathbf{A}) &=& L1_\mathrm{hitT}(\mathbf{A}) = 3.5\;ns - 1.2 \times [0.04 * (12\;ns + 0.75 * 70\;ns)]\nonumber \\
+&=& 3.5\;ns - 3.096\;ns = 0.404\;ns \nonumber 
+\end{eqnarray}
+An alternative definition for AMAT (which is not used in the textbook)
+is the average time required for each memory access. In this case the
+data access for a load or store instruction is considered a separate
+access and in the case of the unified cache, we do not need to take
+the data rate into consideration. With this definition the solution
+is:
+\begin{eqnarray}
+\mathrm{AMAT} &=& L1_\mathrm{hitT} + L1_\mathrm{missR} \times (L2_\mathrm{hitT} + L2_\mathrm{missR} \times \mathrm{Memory}_\mathrm{accessT}) \nonumber \\
+L1_\mathrm{hitT} &=& \mathrm{AMAT} - L1_\mathrm{missR} \times (L2_\mathrm{hitT} + L2_\mathrm{missR} \times \mathrm{Memory}_\mathrm{accessT}) \nonumber \\
+\mathrm{Clock Cycle}(\mathbf{A}) &=& L1_\mathrm{hitT}(\mathbf{A}) = 3.5\;ns - 0.04 * (12\;ns + 0.75 * 70\;ns)\nonumber \\
+&=& 3.5\;ns - 2.58\;ns = 0.92\;ns \nonumber 
+\end{eqnarray}
+}
+\solspace{1in}
+
+\item ({\bf 7 points}) The AMAT for design {\bf B} was measured to be $3.0\;ns$. What is the miss rate, expressed as a percentage, for the L1 cache in this design?
+
+\sol{
+Using the correct definition for AMAT:
+\begin{eqnarray}
+\frac{\mathrm{AMAT} - L1_\mathrm{hitT}}{1.0 + \mathrm{DataR}} &=& L1_\mathrm{missR} \times (L2_\mathrm{hitT} + L2_\mathrm{missR} \times \mathrm{Memory}_\mathrm{accessT}) \nonumber \\
+L1_\mathrm{missR} &=& \frac{\mathrm{AMAT} - L1_\mathrm{hitT}}{ (1.0 + \mathrm{DataR}) \times [L2_\mathrm{hitT} + L2_\mathrm{missR} \times \mathrm{Memory}_\mathrm{accessT}]} \nonumber \\
+L1_\mathrm{missR}(\mathbf{B}) &=& \frac{3.0\;ns - 1.07\;ns}{1.2 \times [12\;ns + 0.75 * 70\;ns]} = \frac{1.93}{77.4} =0.025 = 2.5\% \nonumber 
+\end{eqnarray}
+}
+
+\sol{
+Using the alternative definition for AMAT:
+\begin{eqnarray}
+L1_\mathrm{missR} &=& \frac{\mathrm{AMAT} - L1_\mathrm{hitT}}{L2_\mathrm{hitT} + L2_\mathrm{missR} \times \mathrm{Memory}_\mathrm{accessT}} \nonumber \\
+L1_\mathrm{missR}(\mathbf{B}) &=& \frac{3.0\;ns - 1.07\;ns}{12\;ns + 0.75 * 70\;ns} = \frac{1.93}{64.5} =0.03 = 3\% \nonumber 
+\end{eqnarray}
+}
+\solspace{1in}
+
+\item ({\bf 6 points}) A new member of the design team says that she
+  can change the L1 of design {\bf A} to reduce the clock cycle
+  without affecting miss rate. As a manager, you are skeptical about
+  her claim because you calculated how much faster the clock cycle
+  would have to be to match design {\bf B}. What should be the
+  percent reduction in the hit time of L1 of design {\bf A} for
+  that design to have the same AMAT as design {\bf B} for this
+  program?
+
+\sol{
+Using the correct definition for AMAT:
+\begin{eqnarray}
+L1_\mathrm{hitT} &=& \mathrm{AMAT} - (1.0 + \mathrm{DataR}) \times [L1_\mathrm{missR} \times (L2_\mathrm{hitT} + L2_\mathrm{missR} \times \mathrm{Memory}_\mathrm{accessT})] \nonumber \\
+\mathrm{Clock Cycle}(\mathbf{newA}) &=& L1_\mathrm{hitT}(\mathbf{newA}) = 3.0\;ns - 1.2 \times [0.04 * (12\;ns + 0.75 * 70\;ns)]\nonumber \\
+&=& 3.0\;ns - 3.096\;ns = - 0.096\;ns \nonumber \\
+\end{eqnarray}
+Therefore it is impossible to reduce hit time of design A, without affecting the miss rate, to match the AMAT of design B.
+}
+
+\sol{
+Using the alternative definition for AMAT:
+\begin{eqnarray}
+\mathrm{Clock Cycle}(\mathbf{newA}) &=& L1_\mathrm{hitT}(\mathbf{newA}) = 3.0\;ns - 0.04 * (12\;ns + 0.75 * 70\;ns)\nonumber \\
+&=& 3.0\;ns - 2.58\;ns = 0.42\;ns \nonumber \\
+\mathrm{Pencent\;reduction} &=& \frac{0.92-0.42}{0.92}\times 100 = 54\% \nonumber
+\end{eqnarray}
+}
+\solspace{1in}
+
+\end{enumerate}
+\end{question}
+
+\end{document}
+

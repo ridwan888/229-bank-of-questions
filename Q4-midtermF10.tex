@@ -1,0 +1,232 @@
+\documentclass[psfig,11pt]{article} 
+ 
+\textheight 24.4cm
+\textwidth 16.59cm
+\topmargin -0.0cm
+\oddsidemargin -0.04in
+\evensidemargin -0.04in
+
+\def\normalstretch{1.0}
+\def\talllinestretch{1.5}
+\def\shortlinestretch{0.8}
+\renewcommand{\baselinestretch}{\normalstretch}
+\parskip 1ex
+\renewcommand{\topfraction}{.75}
+\renewcommand{\textfraction}{.20}
+\renewcommand{\floatsep}{0.0pt}
+\renewcommand{\textfloatsep}{1.0cm}
+\renewcommand{\floatpagefraction}{.85}
+
+\def\portindent{\hspace{\parindent}}
+\newcommand{\REM}[1]{} 
+%\newcommand{\sol}[1]{\noindent\textcolor{red}{{#1}}}
+%\newcommand{\solspace}[1]{}
+\newcommand{\sol}[1]{\REM{#1}}
+\newcommand{\solspace}[1]{\vspace{#1}}
+
+
+\newif\ifsol
+%\soltrue
+
+\input epsf
+\usepackage{epsfig}
+\usepackage{subfigure}
+\usepackage{fullpage}
+\usepackage{multirow}
+%\usepackage{multicolumn}
+\pagestyle{plain}
+\usepackage[usenames]{color}
+
+\begin{document}
+
+\newcounter{quest}
+\newenvironment{question}[1][??]{\noindent{\bf Question  \stepcounter{quest}
+\arabic{quest} (\textrm{#1} points): }}
+
+\renewcommand{\theenumi}{\alph{enumi}}
+
+\color{black}
+
+\begin{question}[25] In the reverse engineering of a computer application, 
+an important task is to write the source code for a corresponding
+segment of assembly code. You are working for a security agency and
+you have been asked to provide source-level code for the function {\tt
+  enigma} whose assembly code is below. The code is printed
+with line numbers to facilitate referencing to instructions in your
+answer.
+
+
+\begin{verbatim}
+(1) enigma:
+(2)       add  $t0, $zero, $zero
+(3)       slt  $t1, $t0, $a2
+(4)       beq  $$t1, $zero, label_one
+(4') label_two:
+(5)       sll  $t2, $t0, 2
+(6)       add  $t3, $a1, $t2
+(7)       lw   $t4, 0($t3)
+(8)       sll  $t5, $t4, 2
+(9)       add  $t6, $a0, $t5
+(10)      lw   $t7, 0($t6)
+(11)      lw   $t8, 4($t3)
+(12)      sll  $t9, $t8, 2
+(13)      add  $t1, $a0, $t9
+(14)      sw   $t7, 0($t1)
+(15)      addi $t0, $t0, 1
+(15')     blt  $t0, $a2, label_two
+(16) label_one:
+(17)      jr $ra
+\end{verbatim}
+
+\begin{enumerate}
+
+\item ({\bf 10 points}) Assume that this function follows the MIPS
+  procedure-calling conventions. How many parameters does the function
+  {\tt enigma} has? Give a name for each parameter. You you will use
+  these names in your source code. Also, indicate the type of the
+  parameter (is it an address or a value? In the case of a value, can
+  you say anything about the number of bits?) Justify your answer.
+
+
+\ifsol
+\color{red}
+The function accesses registers {\tt \$a0}, {\tt \$a1}, and {\tt \$a2}. Therefore it has three parameters. 
+\\
+{\tt \$a2} is compared with register {\tt \$t0} which was initialized
+to zero. Thus it must be a value. It could have any number of bits
+from 1 to 32. We will call it {\tt N}.
+\\
+{\tt \$a1} is added to {\tt \$t2} at line 6, and the result ({\tt
+  \$t3}) is then used as the base for a load. Thus {\tt \$a1} is
+probably the base of an array, and thus is a pointer. We will call it
+{\tt C}
+\\
+{\tt \$a0} is added to {\tt \$t5} in line 9, and the result ({\tt
+  \$t6}) is used as the base for a load. Thus {\tt \$a1} is also
+probably a memory address. We will call it {\tt A} 
+\color{black}
+\else
+\vspace{1in}
+\fi
+
+\item ({\bf 10 points}) How many memory loads and how many memory stores are
+  executed by {\tt enigma}? Your answer can be in terms of one or more
+  of the parameters of the function.
+
+\ifsol
+\color{red}
+ There is a loop in {\tt enigma} and each iteration of the loop
+  executes 3 loads and 1 store. The loop executes {\tt \$a2} times (we
+  called it {\tt N} above). Thus 3 $\times$ {\tt N} loads and {\tt
+    N} stores are executed.
+\color{black}
+\else
+\vspace{1in}
+\fi
+
+\item ({\bf 5 points}) Write C-style source code that leads to the
+  generation of the assembly code above for {\tt enigma}.
+
+
+\ifsol
+\color{red}
+The first step is to write comments in the assembly code. We have
+  given the following names to the parameters: {\tt \$a0 = A, \$a1 =
+    C, \$a2 = N}. It is easy to see that {\tt \$t0} is the index for a loop,
+  thus we will call it {\tt i}. 
+
+\begin{verbatim}
+(1) enigma:
+(2)       add  $t0, $zero, $zero       # i <-- 0
+(3)       slt  $t1, $t0, $a2           # if (i < N) then $t1 <-- 1 else $t1 <-- 0
+(4)       beq  $$t1, $zero, label_one  # if ($t1 == 0) goto label_one
+(4') label_two:
+(5)       sll  $t2, $t0, 2             # $t2 = 4*i
+(6)       add  $t3, $a1, $t2           # $t3 = C+4*i
+(7)       lw   $t4, 0($t3)             # $t4 = Mem[C+4*i]
+(8)       sll  $t5, $t4, 2             # $t5 = 4 * Mem[C+4*i]
+(9)       add  $t6, $a0, $t5           # $t6 = A + (4 * Mem[C+4*i])
+(10)      lw   $t7, 0($t6)             # $t7 = Mem[A + (4 * Mem[C+4*i])]
+(11)      lw   $t8, 4($t3)             # $t8 = Mem[C+4*i + 4]
+(12)      sll  $t9, $t8, 2             # $t9 = Mem[C+4*i + 4] * 4
+(13)      add  $t1, $a0, $t9           # $t1 = A + Mem[C+4*i + 4] * 4
+(14)      sw   $t7, 0($t1)             # Mem[A + Mem[C+4*i + 4] * 4] 
+                                       #    <-- Mem[A + (4 * Mem[C+4*i])]
+(15)      addi $t0, $t0, 1             # i <-- i+1
+(15')     blt  $t0, $a2, label_two     # if(i < N) goto label_two
+(16) label_one:
+(17)      jr $ra
+\end{verbatim}
+
+One of the first things that we can do to simplify this code is to
+  recognize that a reference to the memory position {\tt Mem[C+4*i]}
+  is represented in the C language as {\tt C[i]}. Similarly, a reference to {\tt Mem[C+4*i + 4]} is written in the C language as {\tt C[i+1]}. With these
+  replacements, we can rewrite the comments above as follows:
+  
+\begin{verbatim}
+(1) enigma:
+(2)       add  $t0, $zero, $zero       # i <-- 0
+(3)       slt  $t1, $t0, $a2           # if (i < N) then $t1 <-- 1 else $t1 <-- 0
+(4)       beq  $$t1, $zero, label_one  # if ($t1 == 0) goto label_one
+(4') label_two:
+(5)       sll  $t2, $t0, 2             # $t2 = 4*i
+(6)       add  $t3, $a1, $t2           # $t3 = C+4*i
+(7)       lw   $t4, 0($t3)             # $t4 = C[i]
+(8)       sll  $t5, $t4, 2             # $t5 = 4 * C[i]
+(9)       add  $t6, $a0, $t5           # $t6 = A + 4*C[i]
+(10)      lw   $t7, 0($t6)             # $t7 = Mem[A + (4*C[i])]
+(11)      lw   $t8, 4($t3)             # $t8 = C[i+1]
+(12)      sll  $t9, $t8, 2             # $t9 = C[i+1] * 4
+(13)      add  $t1, $a0, $t9           # $t1 = A + C[i+1] * 4
+(14)      sw   $t7, 0($t1)             # Mem[A + C[i+1] * 4] 
+                                       #    <-- Mem[A + (4*C[i])]
+(15)      addi $t0, $t0, 1             # i <-- i+1
+(15')     blt  $t0, $a2, label_two     # if(i < N) goto label_two
+(16) label_one:
+(17)      jr $ra
+\end{verbatim}
+
+Now we should apply the same transformations to the reminder
+  memory references to obtain the following pseudo code:
+
+\begin{verbatim}
+(1) enigma:
+(2)       add  $t0, $zero, $zero       # i <-- 0
+(3)       slt  $t1, $t0, $a2           # if (i < N) then $t1 <-- 1 else $t1 <-- 0
+(4)       beq  $$t1, $zero, label_one  # if ($t1 == 0) goto label_one
+(4') label_two:
+
+          A[C[i+1]] <-- A[C[i]]
+
+(15)      addi $t0, $t0, 1             # i <-- i+1
+(15')     blt  $t0, $a2, label_two     # if(i < N) goto label_two
+(16) label_one:
+(17)      jr $ra
+\end{verbatim}
+
+Thus the C code for {\tt enigma} is
+  (versions of the code that use more temporary variables for storage
+  of intermediate results, or use slightly different types, are also
+  acceptable):
+
+\begin{verbatim}
+void enigma(int *A, int *C, int N)
+{
+ int i;
+
+ for(i=0 ; i < N ; i++)
+    A[C[i+1]] <-- A[C[i]]
+}    
+\end{verbatim}
+\color{black}
+
+\fi
+
+\end{enumerate}
+
+\end{question}
+
+
+
+\end{document}
+

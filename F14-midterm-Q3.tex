@@ -1,0 +1,133 @@
+\documentclass[psfig,11pt]{article} 
+ 
+\textheight 24.4cm
+\textwidth 16.59cm
+\topmargin -0.0cm
+\oddsidemargin -0.04in
+\evensidemargin -0.04in
+
+\def\normalstretch{1.0}
+\def\talllinestretch{1.5}
+\def\shortlinestretch{0.8}
+\renewcommand{\baselinestretch}{\normalstretch}
+\parskip 1ex
+\renewcommand{\topfraction}{.75}
+\renewcommand{\textfraction}{.20}
+\renewcommand{\floatsep}{0.0pt}
+\renewcommand{\textfloatsep}{1.0cm}
+\renewcommand{\floatpagefraction}{.85}
+
+\def\portindent{\hspace{\parindent}}
+\newcommand{\REM}[1]{} 
+%\newcommand{\sol}[1]{\noindent\textcolor{red}{{#1}}}
+%\newcommand{\solspace}[1]{}
+\newcommand{\sol}[1]{\REM{#1}}
+\newcommand{\solspace}[1]{\vspace{#1}}
+
+\newif\ifsol
+%\soltrue
+
+\newcommand{\Bsol}{\ifsol \noindent \color{red}}
+\newcommand{\Esol}[1]{\color{black} 
+\else 
+\vspace{{#1}} 
+ \fi
+ }
+
+\input epsf
+\usepackage{epsfig}
+\usepackage{subfigure}
+\usepackage{fullpage}
+\usepackage{multirow}
+%\usepackage{multicolumn}
+\pagestyle{plain}
+\usepackage[usenames]{color}
+\usepackage{fancyhdr}
+
+\lhead{CMPUT 229 - Fall 2014}
+\chead{}
+\rhead{\hspace{2in}{\Large Name: \ifsol \color{red} Solution \color{black} \fi  \hspace{3in}}}
+\cfoot{}
+\lfoot{}
+\rfoot{}
+
+\begin{document}
+\ \\
+\ \\
+\ \\
+\ \\
+{\centering
+
+ \thispagestyle{fancy}
+
+
+\newcounter{quest}
+\newenvironment{question}[1][??]{\noindent{\bf Question  \stepcounter{quest}
+\arabic{quest} (\textrm{#1} points): }}
+
+\renewcommand{\theenumi}{\alph{enumi}}
+
+\begin{figure*}[t]
+\begin{center}
+\includegraphics[width=6.5in]{FindMax.pdf} 
+\caption{\label{fig:FindMax} MIPS Assembly code for {\tt FindMax} procedure.}
+\end{center}
+\end{figure*}
+
+\begin{question}[10]
+The code for the {\tt FindMax} procedure shown in Figure~\ref{fig:FindMax} is not optimized and there are several improvements that could be made to improve this code.
+\begin{enumerate}
+\item ({\bf 6 points}) What changes would you do to the code to improve its performance. You do not need to write assembly code --- although you may if you wish. You can simply explain how you would transform the code to make it more efficient.
+
+\ifsol
+\color{red}
+The optimization shown in Figure~\ref{fig:FindMax_o1} moves loop-independent code, such as the {\tt i*N} multiplication outside of the loops and transforms the loop to eliminate the execution of jump instructions inside the loop.
+
+\begin{figure*}[t]
+\begin{center}
+\includegraphics[width=5.0in]{FindMax_Opt1.pdf} \caption{\label{fig:FindMax_o1} Optimization for FindMax, move loop-independent code outside of loop and use pointers instead of indices.}
+\end{center}
+\end{figure*}
+
+The optimization shown in Figure~\ref{fig:FindMax_o2} recognizes that the rows of a two-dimensional array are stored in memory sequentially. Thus, the entire computation can be executed as a single loop that scans all the elements of the two-dimensional array.
+
+\begin{figure*}[t]
+\begin{center}
+\includegraphics[width=5.0in]{FindMax_Opt2.pdf} 
+\caption{\label{fig:FindMax_o2} Optimization 2 for {\tt FindMax}, recognize that two-dimensional array is stored as a single-dimensional array in memory.}
+\end{center}
+\end{figure*}
+
+\color{black}
+\else
+\vspace{1in}
+\fi
+
+\item({\bf 4 points}) Given the same invocation of {\tt FindMax} with {\tt N = 10000} and {\tt M = 5000} that we studied in the previous question, would your changes increase or decrease the CPI? Explain your reasoning.
+
+\ifsol
+\color{red}
+
+In both cases the CPI should increase because we reduce the number of instructions with low cycle count that are executed in the loop but we still have to execute the {\tt lw} in each iteration of the loop and this slower instruction dominates the CPI. For instance, for the code in Figure~\ref{fig:FindMax_o2}, the following holds:
+
+\begin{eqnarray}
+ \mathrm{Number\ of\ Instructions} &=& 10 + 4.5 \times N \times M \nonumber \\
+ &=& 10+ 5 \times 10000 \times 5000 \nonumber \\
+ &=& 225,000,010 \nonumber \\
+\mathrm{Number\ of\ Cycles} &=& 6+2+10+(10+2.5+4) \times N \times M \nonumber \\
+&=& 18+16.5 \times 10000 \times 5000 \nonumber \\
+&=& 825,000,018 \nonumber \\
+\mathrm{CPI} &=& 3.7 \frac{\mathrm{Clocks}}{\mathrm{Instructions}} \nonumber
+\end{eqnarray}
+\color{black}
+\else
+\vspace{1in}
+\fi
+
+
+\end{enumerate}
+
+\end{question}
+
+\end{document}
+

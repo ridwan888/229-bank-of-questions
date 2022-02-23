@@ -1,0 +1,119 @@
+\documentclass[psfig,11pt]{article} 
+ 
+\textheight 24.4cm
+\textwidth 16.59cm
+\topmargin -0.0cm
+\oddsidemargin -0.04in
+\evensidemargin -0.04in
+%\usepackage{ams}
+
+\def\normalstretch{1.0}
+\def\talllinestretch{1.5}
+\def\shortlinestretch{0.8}
+\renewcommand{\baselinestretch}{\normalstretch}
+\parskip 1ex
+\renewcommand{\topfraction}{.75}
+\renewcommand{\textfraction}{.20}
+\renewcommand{\floatsep}{0.0pt}
+\renewcommand{\textfloatsep}{1.0cm}
+\renewcommand{\floatpagefraction}{.85}
+
+\def\portindent{\hspace{\parindent}}
+\newcommand{\REM}[1]{} 
+%\newcommand{\sol}[1]{\noindent\textcolor{red}{{#1}}}
+%\newcommand{\solspace}[1]{}
+\newcommand{\sol}[1]{\REM{#1}}
+\newcommand{\solspace}[1]{\vspace{#1}}
+
+\newif\ifsol
+\soltrue
+
+
+\newcommand{\bs}{\ifsol \color{red}}
+\newcommand{\cb}{\color{black}}
+
+\input epsf
+\usepackage{epsfig}
+\usepackage{subfigure}
+\usepackage{fullpage}
+\usepackage{multirow}
+\pagestyle{plain}
+\usepackage[usenames]{color}
+
+\title{CMPUT 229 - Computer Organization and Architecture I\\
+ Final Exam --- Winter 2012 - Section B1}
+\author{Prof. Jos\'{e} Nelson Amaral \\ 
+        Computing Science Department\\
+        University of Alberta}
+%\doublespacing
+\renewcommand{\baselinestretch}{\talllinestretch}
+\date{\framebox{\Large Name: \sol{{\bf Solution}} \hspace{3in}\hrulefill}}
+\renewcommand{\baselinestretch}{\normalstretch}
+%\singlespacing
+
+\begin{document}
+
+\newcounter{quest}
+\newenvironment{question}[1][??]{\noindent{\bf Question  \stepcounter{quest}
+\arabic{quest} (\textrm{#1} points): }}
+
+
+
+\begin{question}[20]
+A processor operates at a frequency of 4 GHz. It has separate L1 instruction and L1 data caches. It has an unified L2 cache. Both the 64Kb L1 instruction cache and the 32Kb L1 data cache are 2-way set associative and have 64-byte blocks. The 512Kb L2 cache is 4-way set associative and has 256-byte blocks. Both instruction and data L1 cache accesses can be completed in one clock cycle in the case of a hit. An access to the L2 cache requires an additional 10 cycles in case of a hit in the L2. If it results is a miss in the L2, then the access requires an additional 140 cycles for the data to be retrieved from the main memory. In a given program 20\% of the instructions are load or store, the hit ratio in the L1 instruction cache is 98.4\% and the hit ratio in the L1 data cache is 92\%. Moreover, 40\% of all the accesses that reach L2 result in misses that must access main memory.
+\begin{enumerate}
+\item({\bf 10 points}) What is the Average Memory Access Time (AMAT), expressed in terms of {\em nano seconds} ($ns$), for this program in this memory hierarchy?
+
+\ifsol \color{red}
+
+The clock cycle is $\frac{1}{4 \times 10^9 Hz} = 0.25\; ns$. Thus the access to L2 is $2.5\; ns$ and the access to the main memory is $140 \times 0.25\;ns = 35\;ns$.
+
+One approach to the solution is to assume that the program  executes 1000 instructions. Using the percentages above, we can draw the following picture for the number of references to each level of the memory hierarchy. 
+
+\begin{center}
+        \includegraphics[width=6in]{MemHierarqSol}
+\end{center}
+
+Reading the figure above, we can write the following expression for AMAT:
+
+\begin{eqnarray}
+\mathrm{AMAT} &=& \frac{0.25 \times 1200 + 32 \times (2.5 + 0.4 \times 35)}{1200} \nonumber \\
+\mathrm{AMAT} &=& \frac{0.25 \times 1200 + 32 \times 2.5 + 12.8 \times 35}{1200} \nonumber \\
+\mathrm{AMAT} &=& \frac{300 + 80 + 448}{1200} = \frac{828}{1200} =  0.69\; ns \nonumber \\
+\end{eqnarray}
+
+\color{black}
+\else
+	\vspace{2.5in}
+\fi
+
+\item({\bf 10 points}) A design change that may reduce the AMAT is to increase the size of the L2 cache. An engineer claims that she can reduce the AMAT by 25\% by changing the size of L2. What is the new local miss ratio of L2?
+
+
+
+\ifsol \color{red}
+
+The AMAT expression can be written in terms of the $\mathrm{L2}_\mathrm{miss\ rate}$:
+
+\begin{eqnarray}
+\mathrm{AMAT} &=& \frac{0.25 \times 1200 + 32 \times (2.5 + \mathrm{L2}_\mathrm{miss\ rate} \times 35)}{1200} \nonumber \\
+\mathrm{AMAT} &=& \frac{380 + \mathrm{L2}_\mathrm{miss\ rate} \times 1120}{1200} \nonumber \\
+\mathrm{L2}_\mathrm{miss\ rate} &=&  \frac{1200 \times \mathrm{AMAT} - 380}{1120} \nonumber \\
+\mathrm{L2}_\mathrm{miss\ rate} &=& \frac{1200 \times 0.75 \times 0.69 - 380}{1120} \nonumber \\
+\mathrm{L2}_\mathrm{miss\ rate} &=&  \frac{621 - 380}{1120} = 0.215 \mathrm{\ or \ } 21.5\% \nonumber
+\end{eqnarray}
+
+\color{black}
+\else
+	\vspace{2.0in}
+\fi
+
+\end{enumerate}
+
+\end{question}
+      
+
+
+
+\end{document}
+
