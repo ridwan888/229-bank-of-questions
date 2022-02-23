@@ -20,11 +20,11 @@ input[type='checkbox'] {
     border: 1px solid #555;
 }
 input[type='checkbox']:checked {
-    background: #117519;
+    background: #275d38;
 }
 
 b a {
-    color: #3c763d
+    color: #007A33;
 }
 
 td b a {
@@ -32,14 +32,16 @@ td b a {
 }
 
 .jumbotron {
-    background: #edffec;
+    background: #275d38;
 }
 .tag-boxes{
     font-size:20px;
+    
 }
 .tag-boxes span{
     margin-left: 2px;
     margin-right: 3px;
+    
 }
 
 #qtable > tbody > tr a {
