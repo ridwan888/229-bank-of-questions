@@ -63,7 +63,7 @@ function filterBySearchTerms(data, text) {
     var regex = new RegExp(terms.join('|'));
     data.forEach(function(item) {
         if (item['Appeared']) {
-            if (item['Name'].toLowerCase().match(regex)) {
+            if (item['Name'].toLowerCase().match(regex) || item['Appeared'].toLowerCase().match(regex)) {
                 filteredData.push(item);
             };
         }
